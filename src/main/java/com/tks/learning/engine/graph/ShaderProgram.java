@@ -1,5 +1,11 @@
 package com.tks.learning.engine.graph;
 
+import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryStack;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.lwjgl.opengl.GL32.*;
 
 public class ShaderProgram {
@@ -9,7 +15,10 @@ public class ShaderProgram {
 
     private int fragmentShaderId;
 
+    private final Map<String, Integer> uniforms;
+
     public ShaderProgram() throws Exception {
+        uniforms = new HashMap<>();
         programId = glCreateProgram();
         if (programId == 0) {
             throw new Exception("Could not create Shader");
@@ -67,6 +76,20 @@ public class ShaderProgram {
         glValidateProgram(programId);
         if (glGetProgrami(programId, GL_VALIDATE_STATUS) == 0) {
             System.err.println("Warning validating shader code: "+glGetProgramInfoLog(programId, 1024));
+        }
+    }
+
+    public void createUniform(String uniformName) throws Exception {
+        int uniformId = glGetUniformLocation(programId, uniformName);
+        if (uniformId < 0) {
+            throw new Exception("Could not find uniform: "+uniformName);
+        }
+        uniforms.put(uniformName, uniformId);
+    }
+
+    public void setUniform(String uniformName, Matrix4f value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            glUniformMatrix4fv(uniforms.get(uniformName), false, value.get(stack.mallocFloat(16)));
         }
     }
 
