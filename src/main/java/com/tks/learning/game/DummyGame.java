@@ -13,7 +13,7 @@ public class DummyGame implements IGameLogic {
 
     private final Renderer renderer;
 
-    DummyGame() {
+    public DummyGame() {
         this.renderer = new Renderer();
     }
 

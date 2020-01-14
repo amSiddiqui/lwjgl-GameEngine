@@ -2,6 +2,7 @@ package com.tks.learning.engine;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
@@ -31,6 +32,8 @@ public class Window {
     }
 
     public void init() {
+        System.out.println("Initialising window");
+
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
@@ -96,7 +99,10 @@ public class Window {
         // Make the window visible
         glfwShowWindow(windowHandle);
 
+        GL.createCapabilities();
+
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        System.out.println("Window Initialization complete");
 
     }
 
@@ -141,7 +147,7 @@ public class Window {
         return this.vSync;
     }
 
-    private void setResized(boolean resized) {
+    public void setResized(boolean resized) {
         this.resized = resized;
     }
 }
