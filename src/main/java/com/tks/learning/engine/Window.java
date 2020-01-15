@@ -152,4 +152,8 @@ public class Window {
     public void setResized(boolean resized) {
         this.resized = resized;
     }
+
+    public long getWindowHandle() {
+        return this.windowHandle;
+    }
 }

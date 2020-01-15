@@ -1,7 +1,5 @@
 package com.tks.learning.engine;
 
-import java.lang.annotation.Target;
-
 public class GameEngine implements Runnable{
 
     public final int TARGET_FPS = 75;
@@ -9,10 +7,12 @@ public class GameEngine implements Runnable{
 
     private final Window window;
     private final Timer timer;
+    private final MouseInput mouseInput;
     private final IGameLogic gameLogic;
 
     public GameEngine (String windowTitle, int width, int height, boolean vSync, IGameLogic logic) {
         window = new Window(windowTitle, width, height, vSync);
+        mouseInput = new MouseInput();
         this.gameLogic = logic;
         timer = new Timer();
     }
@@ -21,6 +21,7 @@ public class GameEngine implements Runnable{
         window.init();
         timer.init();
         gameLogic.init(window);
+        mouseInput.init(window);
     }
 
     protected void gameLoop() {
@@ -59,11 +60,13 @@ public class GameEngine implements Runnable{
     }
 
     private void input() {
-        gameLogic.input(window);
+        mouseInput.input(window);
+        gameLogic.input(window, mouseInput);
+
     }
 
     private void update(float interval) {
-        gameLogic.update(interval);
+        gameLogic.update(interval, mouseInput);
     }
 
     private void render() {
@@ -79,5 +82,12 @@ public class GameEngine implements Runnable{
         } catch (Exception e) {
             e.printStackTrace();
         }
+        finally {
+            cleanup();
+        }
+    }
+
+    private void cleanup() {
+        gameLogic.cleanup();
     }
 }

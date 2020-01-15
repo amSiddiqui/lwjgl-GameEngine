@@ -1,9 +1,12 @@
 package com.tks.learning.game;
 
 import com.tks.learning.engine.IGameLogic;
+import com.tks.learning.engine.MouseInput;
 import com.tks.learning.engine.Window;
+import com.tks.learning.engine.graph.Camera;
 import com.tks.learning.engine.graph.Mesh;
 import com.tks.learning.engine.graph.Texture;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -18,7 +21,13 @@ public class DummyGame implements IGameLogic {
 
     private int scaleInc = 0;
 
-    private float color = 0.f;
+    private static final float MOUSE_SENSITIVITY = 0.2f;
+
+    private final Camera camera;
+
+    private static final float CAMERA_POS_STEP = 0.05f;
+
+    private final Vector3f cameraInc;
 
     private final Renderer renderer;
 
@@ -27,6 +36,8 @@ public class DummyGame implements IGameLogic {
 
     public DummyGame() {
         this.renderer = new Renderer();
+        camera = new Camera();
+        cameraInc = new Vector3f();
     }
 
     @Override
@@ -128,7 +139,29 @@ public class DummyGame implements IGameLogic {
     }
 
     @Override
-    public void input(Window window) {
+    public void input(Window window, MouseInput mouseInput) {
+
+//        Camera controls
+
+        cameraInc.set(0, 0, 0);
+        if (window.isKeyPressed(GLFW_KEY_I)) {
+            cameraInc.z = -1;
+        } else if (window.isKeyPressed(GLFW_KEY_K)) {
+            cameraInc.z = 1;
+        }
+        if (window.isKeyPressed(GLFW_KEY_J)) {
+            cameraInc.x = -1;
+        } else if (window.isKeyPressed(GLFW_KEY_L)) {
+            cameraInc.x = 1;
+        }
+        if (window.isKeyPressed(GLFW_KEY_N)) {
+            cameraInc.y = -1;
+        } else if (window.isKeyPressed(GLFW_KEY_M)) {
+            cameraInc.y = 1;
+        }
+
+//        Object controls
+
         displayXInc = 0;
         displayYInc = 0;
         displayZInc = 0;
@@ -136,25 +169,33 @@ public class DummyGame implements IGameLogic {
 
         if (window.isKeyPressed(GLFW_KEY_UP)) {
             displayYInc = 1;
-        } else if (window.isKeyPressed(GLFW_KEY_DOWN)) {
+        } if (window.isKeyPressed(GLFW_KEY_DOWN)) {
             displayYInc = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_LEFT)){
+        } if (window.isKeyPressed(GLFW_KEY_LEFT)){
             displayXInc = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_RIGHT)){
+        } if (window.isKeyPressed(GLFW_KEY_RIGHT)){
             displayXInc = 1;
-        } else if (window.isKeyPressed(GLFW_KEY_Q)){
+        } if (window.isKeyPressed(GLFW_KEY_Q)){
             displayZInc = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_W)) {
+        } if (window.isKeyPressed(GLFW_KEY_W)) {
             displayZInc = 1;
-        } else if (window.isKeyPressed(GLFW_KEY_A)) {
+        } if (window.isKeyPressed(GLFW_KEY_A)) {
             scaleInc = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_S)) {
+        } if (window.isKeyPressed(GLFW_KEY_S)) {
             scaleInc = 1;
         }
     }
 
     @Override
-    public void update(float interval) {
+    public void update(float interval, MouseInput mouseInput) {
+
+        camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
+
+        if (mouseInput.isLeftButtonPressed()) {
+            Vector2f rotVec = mouseInput.getDisplVec();
+            camera.moveRotation(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
+        }
+
         for (GameItem gameItem : gameItems) {
             Vector3f itemPosition = gameItem.getPosition();
             float posX = itemPosition.x + displayXInc * 0.01f;
@@ -163,7 +204,7 @@ public class DummyGame implements IGameLogic {
             gameItem.setPosition(posX, posY, posZ);
 
             float scale = gameItem.getScale();
-            scale += scaleInc * 0.05f;
+            scale += scaleInc * 0.01f;
             if (scale < 0) {
                 scale = 0;
             }
@@ -179,8 +220,9 @@ public class DummyGame implements IGameLogic {
 
     @Override
     public void render(Window window) {
-        window.setClearColor(color, color, color, 0.0f);
-        renderer.render(window, gameItems);
+        float color = 0.15f;
+        window.setClearColor(color, color, color, 1.0f);
+        renderer.render(window, camera, gameItems);
     }
 
     @Override

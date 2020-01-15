@@ -93,7 +93,7 @@ public class Mesh {
 
         glActiveTexture(GL_TEXTURE0);
 
-        glBindTexture(GL_TEXTURE_2D, texture.getId());
+        texture.bind();
 
         glBindVertexArray(this.getVaoId());
 

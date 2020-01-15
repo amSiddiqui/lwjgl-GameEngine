@@ -1,6 +1,7 @@
 package com.tks.learning.game;
 
 import com.tks.learning.engine.Window;
+import com.tks.learning.engine.graph.Camera;
 import com.tks.learning.engine.graph.ShaderProgram;
 import com.tks.learning.engine.graph.Transformation;
 import org.apache.commons.io.IOUtils;
@@ -42,13 +43,13 @@ public class Renderer {
         shaderProgram.link();
 
         shaderProgram.createUniform("projectionMatrix");
-        shaderProgram.createUniform("worldMatrix");
+        shaderProgram.createUniform("modelViewMatrix");
         shaderProgram.createUniform("texture_sampler");
         window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-       System.out.println("Finished Initializing Renderer");
+        System.out.println("Finished Initializing Renderer");
     }
 
-    public void render(Window window, GameItem[] items) {
+    public void render(Window window, Camera camera, GameItem[] items) {
         clear();
         if (window.isResized()) {
             glViewport(0, 0, window.getWidth(), window.getHeight());
@@ -59,15 +60,14 @@ public class Renderer {
 
         Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         shaderProgram.setUniform("projectionMatrix", projectionMatrix);
+
+        Matrix4f viewMatrix = transformation.getViewMatrix(camera);
         shaderProgram.setUniform("texture_sampler", 0);
 
+
         for (GameItem item : items) {
-            Matrix4f worldMatrix = transformation.getWorldMatrix(
-                    item.getPosition(),
-                    item.getRotation(),
-                    item.getScale()
-            );
-            shaderProgram.setUniform("worldMatrix", worldMatrix);
+            Matrix4f modelViewMatrix = transformation.getModelViewMatrix(item, viewMatrix);
+            shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
             item.getMesh().render();
         }
 
