@@ -1,7 +1,6 @@
 package com.tks.learning.game;
 
 import com.tks.learning.engine.Window;
-import com.tks.learning.engine.graph.Mesh;
 import com.tks.learning.engine.graph.ShaderProgram;
 import com.tks.learning.engine.graph.Transformation;
 import org.apache.commons.io.IOUtils;
@@ -44,6 +43,7 @@ public class Renderer {
 
         shaderProgram.createUniform("projectionMatrix");
         shaderProgram.createUniform("worldMatrix");
+        shaderProgram.createUniform("texture_sampler");
         window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
        System.out.println("Finished Initializing Renderer");
     }
@@ -59,6 +59,7 @@ public class Renderer {
 
         Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         shaderProgram.setUniform("projectionMatrix", projectionMatrix);
+        shaderProgram.setUniform("texture_sampler", 0);
 
         for (GameItem item : items) {
             Matrix4f worldMatrix = transformation.getWorldMatrix(

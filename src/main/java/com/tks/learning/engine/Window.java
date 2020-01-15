@@ -9,7 +9,7 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
-import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -95,11 +95,13 @@ public class Window {
             // Enable v-sync
             glfwSwapInterval(1);
         }
+        GL.createCapabilities();
 
         // Make the window visible
         glfwShowWindow(windowHandle);
 
-        GL.createCapabilities();
+
+        glEnable(GL_DEPTH_TEST);
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         System.out.println("Window Initialization complete");
