@@ -50,4 +50,7 @@ public class GameItem {
     }
 
 
+    public void cleanup() {
+        mesh.cleanup();
+    }
 }
