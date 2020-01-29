@@ -50,8 +50,10 @@ public class DummyGame2 implements IGameLogic {
 
 //        Mesh mesh = OBJLoader.loadMesh("models/cube.obj");
 //        Texture texture = new Texture("C:\\Users\\aamir\\Documents\\projects\\lwjgl-learning\\src\\texture\\grassblock.png");
-        Mesh mesh = OBJLoader.loadMesh("models/spider.obj");
-        Material material = new Material(new Vector4f(.2f, .5f, .5f, 1.f), reflectance);
+//        Material material = new Material(texture, reflectance);
+        Mesh mesh = OBJLoader.loadMesh("models/StickFigure.OBJ");
+        Texture texture = new Texture("C:\\Users\\aamir\\Documents\\projects\\lwjgl-learning\\src\\texture\\White.png");
+        Material material = new Material(texture, reflectance);
         mesh.setMaterial(material);
 
         GameItem gameItem1 = new GameItem(mesh);
